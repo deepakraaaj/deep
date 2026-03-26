@@ -906,7 +906,7 @@ function ConfessionSection() {
         transition={{ duration: 0.8, delay: 0.4 }}
       >
         <p className="text-white/80 text-lg leading-relaxed mb-6">
-          I want to be your best friend. Your lover. Your future husband. The one who gives you love and care like a protective, safe presence that never wavers.
+          I want to be your best friend. Your lover. Your future husband. I wish to show you care and love like your dad does: steady, protective, safe, and always there.
         </p>
 
         <motion.div
@@ -916,7 +916,7 @@ function ConfessionSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           <p className="text-white/70 italic text-lg">
-            "Unakku naan best friend-ah irukkanum, lover-ah irukkanum, future-la un husband-ah irukkanum… Aaga motham un koodave irukkanum."
+            "Unakku naan best friend-ah irukkanum, lover-ah irukkanum, future-la Nalla Husband-ah irukkanum… Aaga motham un koodave irukkanum."
           </p>
           <p className="text-white/50 text-sm mt-4">
             (I want to be your best friend, your lover, your future husband in all your tomorrows… I want to be completely yours.)
