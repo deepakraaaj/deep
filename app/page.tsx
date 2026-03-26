@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Music, ChevronRight, ChevronLeft, Moon } from 'lucide-react';
+import { Heart, Music, ChevronRight, Moon } from 'lucide-react';
 
 const createSeededRandom = (seed: number) => {
   let value = seed >>> 0;
@@ -121,11 +121,6 @@ export default function LoveLetterExperience() {
       label: 'You Are My Everything',
     },
     {
-      id: 'dreams',
-      title: 'Our Totally Normal Future',
-      label: "What We'll Build",
-    },
-    {
       id: 'ask',
       title: 'One Last Question',
       label: 'The Most Important',
@@ -138,16 +133,6 @@ export default function LoveLetterExperience() {
     } else {
       setShowCelebration(true);
     }
-  };
-
-  const handlePrevious = () => {
-    setShowCelebration(false);
-    setCurrentSection((section) => Math.max(section - 1, 0));
-  };
-
-  const handleSelectSection = (sectionIndex: number) => {
-    setShowCelebration(false);
-    setCurrentSection(sectionIndex);
   };
 
   const handleReplay = () => {
@@ -244,8 +229,7 @@ export default function LoveLetterExperience() {
             {currentSection === 6 && <JoySection />}
             {currentSection === 7 && <TeamSection />}
             {currentSection === 8 && <FinalSection />}
-            {currentSection === 9 && <DreamsSection />}
-            {currentSection === 10 && <AskSection />}
+            {currentSection === 9 && <AskSection />}
 
             {/* Progress Bar */}
             <motion.div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4376a] via-[#c89369] to-[#d4376a]"
@@ -256,17 +240,6 @@ export default function LoveLetterExperience() {
             />
 
             {/* Navigation */}
-            <motion.button
-              onClick={handlePrevious}
-              disabled={currentSection === 0}
-              className="fixed bottom-8 left-8 flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-6 py-3 font-semibold text-white/90 backdrop-blur-md transition-all disabled:cursor-not-allowed disabled:border-white/5 disabled:bg-white/5 disabled:text-white/25"
-              whileHover={currentSection === 0 ? undefined : { scale: 1.04 }}
-              whileTap={currentSection === 0 ? undefined : { scale: 0.96 }}
-            >
-              <ChevronLeft size={18} />
-              Back
-            </motion.button>
-
             <motion.button
               onClick={handleNext}
               className="fixed bottom-8 right-8 bg-gradient-to-r from-[#d4376a] to-[#8b2d50] hover:from-[#e6478e] hover:to-[#9a3460] text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 shadow-2xl hover:shadow-[#d4376a]/50 transition-all"
@@ -289,42 +262,13 @@ export default function LoveLetterExperience() {
 
             {/* Chapter Indicator */}
             <motion.div
-              className="fixed left-4 top-4 w-[min(17rem,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-black/35 p-4 text-white/60 shadow-2xl backdrop-blur-xl md:left-8 md:top-8"
+              className="fixed top-8 left-8 text-white/60 text-sm font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <div className="text-[#d4376a] text-base font-bold">{sections[currentSection].label}</div>
-              <div className="mt-1 text-sm font-semibold leading-snug text-white/80">{sections[currentSection].title}</div>
-              <div className="mt-1 text-xs text-white/40">{currentSection + 1} of {sections.length}</div>
-
-              <div className="mt-4 grid grid-cols-4 gap-2">
-                {sections.map((section, index) => {
-                  const isActive = index === currentSection;
-
-                  return (
-                    <button
-                      key={section.id}
-                      type="button"
-                      onClick={() => handleSelectSection(index)}
-                      title={section.title}
-                      aria-label={`Go to ${section.title}`}
-                      className={`h-11 rounded-xl border text-center transition-all ${
-                        isActive
-                          ? 'border-[#d4376a]/60 bg-[#d4376a]/20 text-white'
-                          : 'border-white/10 bg-white/5 text-white/55 hover:border-white/20 hover:bg-white/10 hover:text-white/80'
-                      }`}
-                    >
-                      <div className="text-[0.7rem] font-black uppercase tracking-[0.18em]">
-                        {index + 1}
-                      </div>
-                      <div className="mt-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.12em] opacity-70">
-                        {section.id.slice(0, 4)}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <div className="text-[#d4376a] font-bold text-lg">{sections[currentSection].label}</div>
+              <div className="text-xs text-white/40 mt-1">{currentSection + 1} of {sections.length}</div>
             </motion.div>
           </motion.div>
         ) : (
@@ -964,161 +908,6 @@ function FinalSection() {
           — Deeps
         </motion.p>
       </motion.div>
-    </motion.div>
-  );
-}
-
-function DreamsSection() {
-  const dreams = [
-    {
-      title: 'A Home Where You Steal Everything',
-      badge: 'Domestic Theft',
-      desc: 'My hoodies, my blanket, my side of the bed, and somehow probably my last nerve too. Very romantic. Very legal.',
-      titleClass: 'text-[#ff7aa6]',
-      badgeClass: 'border-[#d4376a]/20 bg-[#d4376a]/10 text-[#ffb8cc]',
-      railClass: 'bg-[#d4376a]',
-    },
-    {
-      title: 'Growing Old, Still Being Dramatic',
-      badge: 'Award Season',
-      desc: "Obviously we'll be that couple arguing over nothing, making up in five minutes, and then behaving like we deserve a relationship award.",
-      titleClass: 'text-[#ff9ac8]',
-      badgeClass: 'border-white/10 bg-white/5 text-white/70',
-      railClass: 'bg-[#ff9ac8]',
-    },
-    {
-      title: 'Trips With Absolutely No Chaos',
-      badge: 'Fake Itinerary',
-      desc: "We'll call it a calm vacation right before getting lost, overpacking, roasting each other, and somehow making that the best part.",
-      titleClass: 'text-[#f0c18f]',
-      badgeClass: 'border-[#c89369]/20 bg-[#c89369]/10 text-[#f0c18f]',
-      railClass: 'bg-[#c89369]',
-    },
-    {
-      title: 'A Tiny Empire of Sass',
-      badge: 'Long-Term Damage',
-      desc: 'A warm little life full of inside jokes, fake attitude, loud laughter, and a ridiculous amount of love pretending to be casual.',
-      titleClass: 'text-[#ffd0df]',
-      badgeClass: 'border-[#f0c18f]/20 bg-[#f0c18f]/10 text-[#f7cfaa]',
-      railClass: 'bg-[#ffd0df]',
-    },
-  ];
-
-  return (
-    <motion.div className="relative mx-auto w-full max-w-5xl overflow-hidden px-2">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-16 top-24 h-56 w-56 rounded-full bg-[#d4376a]/10 blur-3xl" />
-        <div className="absolute right-0 top-12 h-64 w-64 rounded-full bg-[#c89369]/8 blur-3xl" />
-      </div>
-
-      <div className="relative z-10 rounded-[2.25rem] border border-white/10 bg-black/20 p-6 shadow-[0_24px_90px_rgba(0,0,0,0.28)] backdrop-blur-md md:p-8">
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div className="text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-5 inline-flex rounded-full border border-[#c89369]/25 bg-[#c89369]/10 px-4 py-2 text-[0.72rem] font-black uppercase tracking-[0.34em] text-[#f0c18f]"
-            >
-              Future Forecast
-            </motion.div>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15 }}
-              className="text-5xl font-black leading-[0.95] text-white md:text-6xl"
-            >
-              Our Totally
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#ff7aa6] via-[#ffc6d8] to-[#f2bb7d]">
-                Normal Future
-              </span>
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.25 }}
-              className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/72 lg:mx-0 lg:text-xl"
-            >
-              Because apparently loving you like a normal person was not enough. My brain had to go and start planning an entire lifetime with you. Very chill behavior.
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
-            className="rounded-[1.9rem] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 text-left"
-          >
-            <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-[#f0c18f]/70">
-              Apparently
-            </p>
-            <p className="mt-4 text-2xl font-black leading-tight text-white">
-              This whole page is just evidence that I already made you my long-term problem.
-            </p>
-            <p className="mt-5 text-sm leading-relaxed text-white/60">
-              House? Trips? Arguments? Old-age nonsense? Yes. All of it. My brain signed the contract before I did.
-            </p>
-          </motion.div>
-        </div>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {dreams.map((dream, index) => (
-            <motion.article
-              key={dream.title}
-              className="relative overflow-hidden rounded-[1.9rem] border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.03] p-6 text-left shadow-[0_18px_50px_rgba(0,0,0,0.2)]"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.28 + index * 0.1 }}
-              whileHover={{ y: -4 }}
-            >
-              <div className={`absolute left-0 top-0 h-full w-1 ${dream.railClass}`} />
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-[0.72rem] font-black uppercase tracking-[0.28em] text-white/35">
-                  Case {String(index + 1).padStart(2, '0')}
-                </p>
-                <span className={`rounded-full border px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.22em] ${dream.badgeClass}`}>
-                  {dream.badge}
-                </span>
-              </div>
-
-              <h3 className={`mt-5 text-2xl font-black leading-tight ${dream.titleClass}`}>
-                {dream.title}
-              </h3>
-
-              <p className="mt-4 text-base leading-relaxed text-white/72">
-                {dream.desc}
-              </p>
-            </motion.article>
-          ))}
-        </div>
-
-        <motion.div
-          className="mt-8 grid gap-5 rounded-[1.9rem] border border-white/10 bg-[#12070d]/82 p-6 text-left md:grid-cols-[1.2fr_0.8fr] md:items-end"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <div>
-            <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-white/35">
-              Official Summary
-            </p>
-            <p className="mt-4 text-xl leading-relaxed text-white/85 md:text-2xl">
-              So yes, I&apos;m acting calm, but I&apos;ve already imagined the house, the trips, the old-age bickering, and you still being the center of all of it. Completely reasonable. Not obsessed at all.
-            </p>
-          </div>
-
-          <div className="border-t border-white/8 pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
-            <p className="text-lg font-semibold italic text-[#f0b476] md:text-xl">
-              "Ennai unnai maatriyadum kaalam, ennaiyum unnaiyum kazhippin kaalam"
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-white/45">
-              (In the moments I become you, and you become me, time loses all meaning)
-            </p>
-          </div>
-        </motion.div>
-      </div>
     </motion.div>
   );
 }
