@@ -219,6 +219,11 @@ export default function LoveLetterExperience() {
       label: 'You Are My Everything',
     },
     {
+      id: 'song',
+      title: 'Mudhal Nee Mudivum Nee',
+      label: 'Mudhal Nee Mudivum Nee',
+    },
+    {
       id: 'ask',
       title: 'One Last Question',
       label: 'The Most Important',
@@ -335,7 +340,8 @@ export default function LoveLetterExperience() {
             {currentSection === 6 && <JoySection />}
             {currentSection === 7 && <TeamSection />}
             {currentSection === 8 && <FinalSection />}
-            {currentSection === 9 && <AskSection />}
+            {currentSection === 9 && <SongSection />}
+            {currentSection === 10 && <AskSection />}
 
             {/* Progress Bar */}
             <motion.div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4376a] via-[#c89369] to-[#d4376a]"
@@ -550,7 +556,7 @@ function IntroSection() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight"
       >
-        Hey Deepthi,
+        Hey Deepu Kutty,
       </motion.h1>
 
       <motion.p
@@ -1146,7 +1152,7 @@ function FinalSection() {
               You&apos;re not just part of my life.
             </p>
             <p className="mt-3 text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff7aa6] via-[#ffd4df] to-[#c89369] md:text-4xl">
-              You&apos;re my whole life.
+              You&apos;re my 🤍
             </p>
           </motion.div>
         </motion.div>
@@ -1258,6 +1264,139 @@ function AskSection() {
           </motion.div>
         </motion.div>
       )}
+    </motion.div>
+  );
+}
+
+function SongSection() {
+  const floatingWords = [
+    { text: 'first thought', left: '8%', top: '18%', delay: 0 },
+    { text: 'last peace', left: '74%', top: '16%', delay: 0.35 },
+    { text: 'still you', left: '14%', top: '78%', delay: 0.7 },
+    { text: 'every time', left: '72%', top: '76%', delay: 1.05 },
+  ];
+
+  const feelings = [
+    'You feel like the first thought my heart goes to.',
+    'You feel like the quiet that wins after every chaos.',
+    'You feel like the ending I would still choose on purpose.',
+  ];
+
+  return (
+    <motion.div className="relative w-full max-w-5xl mx-auto overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <motion.div
+          className="absolute left-[8%] top-[10%] h-40 w-40 rounded-full bg-[#d4376a]/15 blur-3xl"
+          animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-[6%] right-[6%] h-52 w-52 rounded-full bg-[#c89369]/12 blur-3xl"
+          animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0.72, 0.35] }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {floatingWords.map((word) => (
+          <motion.div
+            key={word.text}
+            className="absolute text-sm font-semibold uppercase tracking-[0.35em] text-white/12 md:text-base"
+            animate={{
+              y: [0, -22, 0],
+              opacity: [0.08, 0.2, 0.08],
+            }}
+            transition={{
+              duration: 5.5,
+              repeat: Infinity,
+              delay: word.delay,
+              ease: 'easeInOut',
+            }}
+            style={{ left: word.left, top: word.top }}
+          >
+            {word.text}
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        className="relative z-10 rounded-[2rem] border border-white/10 bg-white/[0.03] px-6 py-8 backdrop-blur-xl md:px-12 md:py-12"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.div
+          className="mb-8 text-center md:mb-12"
+          initial={{ opacity: 0, y: -18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+        >
+          <p className="mb-4 text-[0.72rem] font-black uppercase tracking-[0.5em] text-[#c89369]/80">
+            P.S you're the heroine for all the songs i listen to
+          </p>
+          <h2 className="text-4xl font-black tracking-tight text-white md:text-6xl">
+            Mudhal Nee
+            <span className="block bg-gradient-to-r from-[#ff76a2] via-[#ffd4df] to-[#c89369] bg-clip-text text-transparent">
+              Mudivum Nee
+            </span>
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/68 md:text-xl">
+            Some songs stop sounding like music and start sounding like one person.
+            Very annoying behavior. Very you.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-6 md:grid-cols-[1.15fr_0.85fr]">
+          <motion.div
+            className="rounded-[1.75rem] border border-[#d4376a]/25 bg-gradient-to-br from-[#2a121b]/90 via-[#341622]/80 to-[#1b0f15]/90 p-8 shadow-2xl shadow-[#d4376a]/10"
+            initial={{ opacity: 0, x: -18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <p className="mb-6 text-xs font-black uppercase tracking-[0.36em] text-[#ff8fb4]/75">
+              What It Feels Like
+            </p>
+            <div className="space-y-5">
+              {feelings.map((feeling, index) => (
+                <motion.div
+                  key={feeling}
+                  className="rounded-2xl border border-white/8 bg-white/[0.03] p-5"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.35 + index * 0.15 }}
+                >
+                  <div className="mb-3 h-1.5 w-14 rounded-full bg-gradient-to-r from-[#ff76a2] to-[#c89369]" />
+                  <p className="text-xl font-semibold leading-relaxed text-white/88">{feeling}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col justify-between gap-6 rounded-[1.75rem] border border-[#c89369]/20 bg-gradient-to-b from-[#f5d2da]/95 via-[#f4d8c0]/90 to-[#f1dccd]/92 p-8 text-[#4c2230]"
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <div>
+              <p className="mb-4 text-xs font-black uppercase tracking-[0.36em] text-[#8c4a5c]/70">
+                Side Effect
+              </p>
+              <p className="text-3xl font-black leading-tight md:text-4xl">
+                Now every soft line starts sounding suspiciously personal.
+              </p>
+            </div>
+
+            <div className="rounded-[1.5rem] bg-[#4c2230]/8 p-6">
+              <p className="text-sm font-black uppercase tracking-[0.32em] text-[#8c4a5c]/70">
+                Translation
+              </p>
+              <p className="mt-4 text-lg leading-relaxed text-[#5f2a3b]/85">
+                One song, one girl, and suddenly I am staring at the screen like this was written
+                to personally expose me.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
