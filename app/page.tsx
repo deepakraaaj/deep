@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Music, ChevronRight, Moon } from 'lucide-react';
+
+const SONG_SRC = '/Nallai-Allai.mp3';
 
 const createSeededRandom = (seed: number) => {
   let value = seed >>> 0;
@@ -59,11 +61,35 @@ const SPARKLE_PARTICLES = (() => {
   }));
 })();
 
+const ENTRY_SHARDS = (() => {
+  const random = createSeededRandom(0x6b5d4f3a);
+
+  return Array.from({ length: 18 }, (_, id) => {
+    const angle = random() * Math.PI * 2;
+    const distance = createFixedValue(random, 110, 260, 2);
+
+    return {
+      id,
+      x: Number((Math.cos(angle) * distance).toFixed(2)),
+      y: Number((Math.sin(angle) * distance).toFixed(2)),
+      rotate: createFixedValue(random, -260, 260, 2),
+      width: createFixedValue(random, 12, 34, 2),
+      height: createFixedValue(random, 6, 14, 2),
+      delay: createFixedValue(random, 0, 0.14, 2),
+      colorClass:
+        id % 3 === 0 ? 'bg-[#ff8fb4]' : id % 3 === 1 ? 'bg-[#f0c18f]' : 'bg-white/80',
+    };
+  });
+})();
+
 export default function LoveLetterExperience() {
   const [currentSection, setCurrentSection] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  const [entryState, setEntryState] = useState<'splash' | 'breaking' | 'story'>('splash');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const entryTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -73,6 +99,78 @@ export default function LoveLetterExperience() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.55;
+
+    const handlePlay = () => setMusicPlaying(true);
+    const handlePause = () => setMusicPlaying(false);
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (entryTimeoutRef.current !== null) {
+        window.clearTimeout(entryTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const playAudio = async (restart = false) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.55;
+
+    if (restart) {
+      audio.currentTime = 0;
+    }
+
+    try {
+      await audio.play();
+    } catch {
+      setMusicPlaying(false);
+    }
+  };
+
+  const handleBeginExperience = async () => {
+    if (entryState !== 'splash') return;
+
+    setEntryState('breaking');
+    await playAudio(true);
+
+    if (entryTimeoutRef.current !== null) {
+      window.clearTimeout(entryTimeoutRef.current);
+    }
+
+    entryTimeoutRef.current = window.setTimeout(() => {
+      setEntryState('story');
+    }, 1100);
+  };
+
+  const handleMusicToggle = () => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+
+    if (audio.paused) {
+      void playAudio();
+      return;
+    }
+
+    audio.pause();
+  };
 
   const sections = [
     {
@@ -142,6 +240,8 @@ export default function LoveLetterExperience() {
 
   return (
     <div className="relative w-full min-h-screen bg-gradient-to-br from-black via-[#1a0f15] to-[#0a0a0a] overflow-hidden">
+      <audio ref={audioRef} src={SONG_SRC} preload="auto" loop playsInline />
+
       {/* Mouse follower glow */}
       <motion.div
         className="fixed w-64 h-64 bg-gradient-to-r from-[#d4376a]/30 to-[#c89369]/20 rounded-full blur-3xl pointer-events-none"
@@ -211,7 +311,13 @@ export default function LoveLetterExperience() {
 
       {/* Main Content */}
       <AnimatePresence mode="wait">
-        {!showCelebration ? (
+        {entryState !== 'story' ? (
+          <OpeningScreen
+            key="opening-screen"
+            isBreaking={entryState === 'breaking'}
+            onBegin={handleBeginExperience}
+          />
+        ) : !showCelebration ? (
           <motion.div
             key={`section-${currentSection}`}
             initial={{ opacity: 0, y: 20 }}
@@ -252,8 +358,14 @@ export default function LoveLetterExperience() {
 
             {/* Music Toggle */}
             <motion.button
-              onClick={() => setMusicPlaying(!musicPlaying)}
-              className="fixed top-8 right-8 bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white/20 transition-all"
+              onClick={handleMusicToggle}
+              className={`fixed top-8 right-8 border p-3 rounded-full backdrop-blur-md transition-all ${
+                musicPlaying
+                  ? 'border-[#d4376a]/50 bg-[#d4376a]/20 text-white shadow-lg shadow-[#d4376a]/30'
+                  : 'border-white/20 bg-white/10 text-white hover:bg-white/20'
+              }`}
+              title={musicPlaying ? 'Pause song' : 'Play Nallai Allai'}
+              aria-label={musicPlaying ? 'Pause song' : 'Play Nallai Allai'}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -280,6 +392,146 @@ export default function LoveLetterExperience() {
 }
 
 // Section Components
+function OpeningScreen({
+  isBreaking,
+  onBegin,
+}: {
+  isBreaking: boolean;
+  onBegin: () => void;
+}) {
+  const wishes = [
+    'More peace in your mind.',
+    'More laughter in your days.',
+    'More moments that make you feel deeply loved.',
+  ];
+
+  return (
+    <motion.div
+      key="birthday-gate"
+      className="relative z-10 flex min-h-screen w-full items-center justify-center px-4 py-16"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.45 }}
+    >
+      <div className="pointer-events-none absolute inset-0">
+        <motion.div
+          className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d4376a]/16 blur-3xl"
+          animate={{ scale: isBreaking ? [1, 1.35, 1.7] : [1, 1.06, 1] }}
+          transition={{ duration: isBreaking ? 0.85 : 4.2, repeat: isBreaking ? 0 : Infinity, ease: 'easeInOut' }}
+        />
+
+        {ENTRY_SHARDS.map((shard) => (
+          <motion.span
+            key={shard.id}
+            className={`absolute left-1/2 top-1/2 rounded-full ${shard.colorClass}`}
+            style={{
+              width: `${shard.width}px`,
+              height: `${shard.height}px`,
+            }}
+            initial={{ x: -shard.width / 2, y: -shard.height / 2, opacity: 0, rotate: 0, scale: 0.9 }}
+            animate={
+              isBreaking
+                ? {
+                    x: shard.x,
+                    y: shard.y,
+                    opacity: [0, 1, 0],
+                    rotate: shard.rotate,
+                    scale: [0.9, 1, 0.8],
+                  }
+                : {
+                    x: -shard.width / 2,
+                    y: -shard.height / 2,
+                    opacity: 0,
+                    rotate: 0,
+                    scale: 0.9,
+                  }
+            }
+            transition={{ duration: 0.9, delay: shard.delay, ease: 'easeOut' }}
+          />
+        ))}
+
+        <motion.div
+          className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={isBreaking ? { opacity: [0, 0.45, 0], scale: [0.8, 2.2, 2.7] } : { opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.85, ease: 'easeOut' }}
+        />
+      </div>
+
+      <motion.div
+        className="relative w-full max-w-3xl overflow-hidden rounded-[2.4rem] border border-[#f6dce3]/15 bg-black/30 p-8 text-center shadow-[0_24px_90px_rgba(0,0,0,0.34)] backdrop-blur-xl md:p-12"
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={
+          isBreaking
+            ? {
+                scale: [1, 1.06, 0.76],
+                rotate: [0, -2, 7],
+                opacity: [1, 1, 0],
+                filter: ['blur(0px)', 'blur(0px)', 'blur(10px)'],
+              }
+            : {
+                scale: 1,
+                rotate: 0,
+                opacity: 1,
+                filter: 'blur(0px)',
+              }
+        }
+        transition={{ duration: isBreaking ? 0.95 : 0.55, ease: 'easeInOut' }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#d4376a]/16 via-transparent to-[#c89369]/10" />
+
+        <div className="relative">
+          <p className="text-[0.72rem] font-black uppercase tracking-[0.42em] text-[#f0c18f]">
+            Birthday Gate
+          </p>
+          <h1 className="mt-6 text-5xl font-black leading-none text-white md:text-7xl">
+            Happy Birthday
+            <span className="mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-[#ff8fb4] via-[#ffd0df] to-[#f0c18f]">
+              Deepthisirii
+            </span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/72 md:text-xl">
+            A few wishes before the chaos starts:
+          </p>
+
+          <div className="mx-auto mt-8 grid max-w-2xl gap-3 text-left md:grid-cols-3">
+            {wishes.map((wish, index) => (
+              <motion.div
+                key={wish}
+                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-4 text-sm font-medium leading-relaxed text-white/80"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.12 + index * 0.08 }}
+              >
+                {wish}
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.button
+            type="button"
+            onClick={onBegin}
+            disabled={isBreaking}
+            className="mt-10 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-[#d4376a] to-[#a62655] px-8 py-4 text-base font-bold text-white shadow-[0_18px_50px_rgba(212,55,106,0.35)] transition-transform disabled:cursor-wait"
+            whileHover={isBreaking ? undefined : { scale: 1.04 }}
+            whileTap={isBreaking ? undefined : { scale: 0.96 }}
+          >
+            {isBreaking ? 'Breaking open...' : 'Lets Go 22'}
+            <Heart size={18} fill="currentColor" />
+          </motion.button>
+
+          <p className="mt-4 text-sm text-white/45">
+            (P.S. If you don&apos;t feel the love yet, just wait. The best is yet to come.)
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function IntroSection() {
   return (
     <motion.div className="text-center max-w-2xl mx-auto">
